@@ -4,6 +4,22 @@ defined('MOODLE_INTERNAL') || die();
 
 if ($hassiteconfig) {
 
+    // -----------------------------------------------------------------
+    // CATEGORY
+    // -----------------------------------------------------------------
+
+    $ADMIN->add(
+        'localplugins',
+        new admin_category(
+            'local_dww_sso_category',
+            get_string('pluginname', 'local_dww_sso')
+        )
+    );
+
+    // -----------------------------------------------------------------
+    // SETUP WIZARD
+    // -----------------------------------------------------------------
+
     $ADMIN->add(
         'local_dww_sso_category',
         new admin_externalpage(
@@ -14,21 +30,33 @@ if ($hassiteconfig) {
         )
     );
 
-    $ADMIN->add(
-        'localplugins',
-        new admin_category(
-            'local_dww_sso_category',
-            get_string('pluginname', 'local_dww_sso')
-        )
-    );
+    // -----------------------------------------------------------------
+    // GENERAL SETTINGS
+    // -----------------------------------------------------------------
 
     $settings = new admin_settingpage(
-        'local_dww_sso_settings',
+        'local_dww_sso',
         get_string('generalsettings', 'local_dww_sso'),
         'moodle/site:config'
     );
 
-    $ADMIN->add('local_dww_sso_category', $settings);
+    $settings->add(
+        new admin_setting_configpasswordunmask(
+            'local_dww_sso/sharedsecret',
+            get_string('sharedsecret', 'local_dww_sso'),
+            get_string('sharedsecret_desc', 'local_dww_sso'),
+            ''
+        )
+    );
+
+    $ADMIN->add(
+        'local_dww_sso_category',
+        $settings
+    );
+
+    // -----------------------------------------------------------------
+    // STATUS
+    // -----------------------------------------------------------------
 
     $ADMIN->add(
         'local_dww_sso_category',
@@ -40,6 +68,10 @@ if ($hassiteconfig) {
         )
     );
 
+    // -----------------------------------------------------------------
+    // DIAGNOSTICS
+    // -----------------------------------------------------------------
+
     $ADMIN->add(
         'local_dww_sso_category',
         new admin_externalpage(
@@ -49,6 +81,10 @@ if ($hassiteconfig) {
             'moodle/site:config'
         )
     );
+
+    // -----------------------------------------------------------------
+    // SECURITY
+    // -----------------------------------------------------------------
 
     $ADMIN->add(
         'local_dww_sso_category',
@@ -60,6 +96,10 @@ if ($hassiteconfig) {
         )
     );
 
+    // -----------------------------------------------------------------
+    // LOGS
+    // -----------------------------------------------------------------
+
     $ADMIN->add(
         'local_dww_sso_category',
         new admin_externalpage(
@@ -67,23 +107,6 @@ if ($hassiteconfig) {
             get_string('logs', 'local_dww_sso'),
             new moodle_url('/local/dww_sso/logs.php'),
             'moodle/site:config'
-        )
-    );
-
-    $settings->add(
-        new admin_setting_heading(
-            'local_dww_sso/general_heading',
-            get_string('generalsettings', 'local_dww_sso'),
-            get_string('generalsettings_desc', 'local_dww_sso')
-        )
-    );
-
-    $settings->add(
-        new admin_setting_configpasswordunmask(
-            'local_dww_sso/sharedsecret',
-            get_string('sharedsecret', 'local_dww_sso'),
-            get_string('sharedsecret_desc', 'local_dww_sso'),
-            ''
         )
     );
 }
