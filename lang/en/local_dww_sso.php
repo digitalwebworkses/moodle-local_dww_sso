@@ -62,3 +62,12 @@ $string['setup_nextsteps'] = 'Siguientes pasos';
 $string['setup_nextsteps_item1'] = 'Instala DWW Moodle Bridge en WordPress';
 $string['setup_nextsteps_item2'] = 'Configura URL Moodle y token API';
 $string['setup_nextsteps_item3'] = 'Configura el mismo secreto compartido en WordPress';
+$string['setup_wordpress'] = 'WordPress Connection Information';
+
+$string['setup_moodle_url'] = 'Public Moodle URL';
+$string['setup_sso_endpoint'] = 'SSO Endpoint';
+$string['setup_sharedsecret_status'] = 'Shared secret status';
+$string['setup_moodle_version'] = 'Moodle version';
+$string['setup_php_version'] = 'PHP version';
+
+$string['setup_wordpress_note'] = 'Use these values to complete the setup wizard on WordPress.';
