@@ -5,6 +5,16 @@ defined('MOODLE_INTERNAL') || die();
 if ($hassiteconfig) {
 
     $ADMIN->add(
+        'local_dww_sso_category',
+        new admin_externalpage(
+            'local_dww_sso_setup',
+            get_string('setupwizard', 'local_dww_sso'),
+            new moodle_url('/local/dww_sso/setup.php'),
+            'moodle/site:config'
+        )
+    );
+
+    $ADMIN->add(
         'localplugins',
         new admin_category(
             'local_dww_sso_category',

@@ -44,3 +44,21 @@ $string['nologsfound'] = 'No logs found yet.';
 $string['time'] = 'Time';
 $string['level'] = 'Level';
 $string['message'] = 'Message';
+$string['setupwizard'] = 'Asistente de configuración';
+$string['setupwizard_desc'] = 'Configuración guiada inicial para conectar Moodle con DWW Moodle Bridge para WordPress/WooCommerce.';
+
+$string['setup_step1'] = 'Paso 1 — Configuración Moodle';
+$string['setup_step1_item1'] = 'Instala este complemento en /local/dww_sso';
+$string['setup_step1_item2'] = 'Configura un secreto compartido seguro';
+$string['setup_step1_item3'] = 'Verifica que el endpoint SSO esté disponible';
+
+$string['setup_validation'] = 'Validaciones actuales';
+
+$string['setup_sharedsecret'] = 'Secreto compartido configurado';
+$string['setup_login_endpoint'] = 'Endpoint login.php disponible';
+$string['setup_logs'] = 'Directorio de logs escribible';
+
+$string['setup_nextsteps'] = 'Siguientes pasos';
+$string['setup_nextsteps_item1'] = 'Instala DWW Moodle Bridge en WordPress';
+$string['setup_nextsteps_item2'] = 'Configura URL Moodle y token API';
+$string['setup_nextsteps_item3'] = 'Configura el mismo secreto compartido en WordPress';
