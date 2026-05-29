@@ -71,3 +71,16 @@ $string['setup_moodle_version'] = 'Moodle version';
 $string['setup_php_version'] = 'PHP version';
 
 $string['setup_wordpress_note'] = 'Use these values to complete the setup wizard on WordPress.';
+$string['setup_readiness'] = 'System readiness';
+$string['copy'] = 'Copy';
+$string['copied'] = 'Copied';
+
+$string['wordpressurl'] = 'WordPress URL';
+$string['wordpressurl_desc'] = 'Public WordPress site URL where DWW Moodle Bridge is installed.';
+
+$string['setup_wordpress_validation'] = 'WordPress validation';
+$string['setup_wp_reachable'] = 'WordPress reachable';
+$string['setup_wp_plugin'] = 'DWW Moodle Bridge plugin detected';
+$string['setup_wp_woocommerce'] = 'WooCommerce active';
+$string['setup_wp_moodleapi'] = 'Moodle API configured';
+$string['setup_wp_sso'] = 'SSO secret configured';

@@ -1,6 +1,7 @@
 <?php
 
 require_once(__DIR__ . '/../../config.php');
+require_once($CFG->libdir . '/filelib.php');
 
 require_login();
 require_capability('moodle/site:config', context_system::instance());
@@ -14,6 +15,70 @@ $PAGE->set_heading(get_string('pluginname', 'local_dww_sso'));
 global $CFG;
 
 $sharedsecret = get_config('local_dww_sso', 'sharedsecret');
+
+$wordpressurl = trim(
+    (string) get_config('local_dww_sso', 'wordpressurl')
+);
+
+$wphealth = null;
+
+if (!empty($wordpressurl)) {
+
+    $healthurl = rtrim($wordpressurl, '/') . '/wp-json/dwwmb/v1/health';
+
+    $curl = new curl();
+
+    try {
+
+        $response = $curl->get($healthurl);
+
+        if (!empty($response)) {
+
+            $decoded = json_decode($response, true);
+
+            if (
+                !empty($decoded) &&
+                is_array($decoded)
+            ) {
+                $wphealth = $decoded;
+            }
+        }
+    } catch (Exception $e) {
+
+        $wphealth = null;
+    }
+}
+
+function local_dww_sso_status_badge($ok = true)
+{
+    $label = $ok
+        ? get_string('ok', 'local_dww_sso')
+        : get_string('warning', 'local_dww_sso');
+
+    $background = $ok
+        ? '#e8f5e9'
+        : '#fff3e0';
+
+    $color = $ok
+        ? '#2e7d32'
+        : '#ef6c00';
+
+    return html_writer::tag(
+        'span',
+        $label,
+        array(
+            'style' => '
+                display:inline-block;
+                padding:6px 12px;
+                border-radius:999px;
+                font-weight:bold;
+                background:' . $background . ';
+                color:' . $color . ';
+                font-size:13px;
+            '
+        )
+    );
+}
 
 $checks = array(
     array(
@@ -30,9 +95,48 @@ $checks = array(
     ),
 );
 
+$totalchecks = count($checks);
+
+$passedchecks = 0;
+
+foreach ($checks as $check) {
+    if (!empty($check['status'])) {
+        $passedchecks++;
+    }
+}
+
+$readiness = (int) round(
+    ($passedchecks / $totalchecks) * 100
+);
+
 echo $OUTPUT->header();
 
 echo $OUTPUT->heading(get_string('setupwizard', 'local_dww_sso'));
+$color = '#c62828';
+
+if ($readiness >= 100) {
+    $color = '#2e7d32';
+} else if ($readiness >= 60) {
+    $color = '#ef6c00';
+}
+
+echo html_writer::div(
+    html_writer::tag(
+        'strong',
+        get_string('setup_readiness', 'local_dww_sso') . ': ' . $readiness . '%'
+    ),
+    '',
+    array(
+        'style' => '
+            margin-bottom:25px;
+            padding:16px;
+            border-radius:8px;
+            background:#f5f5f5;
+            font-size:18px;
+            color:' . $color . ';
+        '
+    )
+);
 
 echo html_writer::start_div(
     'box generalbox',
@@ -110,14 +214,7 @@ foreach ($checks as $check) {
 
     echo html_writer::tag(
         'td',
-        $ok
-            ? get_string('ok', 'local_dww_sso')
-            : get_string('warning', 'local_dww_sso'),
-        array(
-            'style' => $ok
-                ? 'font-weight:bold;color:#357a38;'
-                : 'font-weight:bold;color:#b26a00;',
-        )
+        local_dww_sso_status_badge($ok),
     );
 
     echo html_writer::end_tag('tr');
@@ -126,6 +223,74 @@ foreach ($checks as $check) {
 echo html_writer::end_tag('tbody');
 
 echo html_writer::end_tag('table');
+
+if (!empty($wordpressurl)) {
+
+    echo html_writer::tag(
+        'h3',
+        get_string('setup_wordpress_validation', 'local_dww_sso')
+    );
+
+    echo html_writer::start_tag(
+        'table',
+        array(
+            'class' => 'generaltable'
+        )
+    );
+
+    echo html_writer::start_tag('tbody');
+
+    $validationrows = array(
+        array(
+            get_string('setup_wp_reachable', 'local_dww_sso'),
+            !empty($wphealth['success']),
+        ),
+        array(
+            get_string('setup_wp_plugin', 'local_dww_sso'),
+            !empty($wphealth['plugin']),
+        ),
+        array(
+            get_string('setup_wp_woocommerce', 'local_dww_sso'),
+            !empty($wphealth['woocommerce']),
+        ),
+        array(
+            get_string('setup_wp_moodleapi', 'local_dww_sso'),
+            !empty($wphealth['moodle_api_configured']),
+        ),
+        array(
+            get_string('setup_wp_sso', 'local_dww_sso'),
+            !empty($wphealth['sso_secret_configured']),
+        ),
+    );
+
+    foreach ($validationrows as $row) {
+
+        $ok = !empty($row[1]);
+
+        echo html_writer::start_tag('tr');
+
+        echo html_writer::tag(
+            'th',
+            s($row[0]),
+            array(
+                'style' => 'width:320px;'
+            )
+        );
+
+        echo html_writer::tag(
+            'td',
+            local_dww_sso_status_badge(
+                $ok ? 'ok' : 'warning'
+            )
+        );
+
+        echo html_writer::end_tag('tr');
+    }
+
+    echo html_writer::end_tag('tbody');
+
+    echo html_writer::end_tag('table');
+}
 
 // -----------------------------------------------------------------
 // WORDPRESS CONNECTION INFO
@@ -182,9 +347,51 @@ foreach ($rows as $row) {
         )
     );
 
+    $valueid = 'dww-copy-' . md5($row[0]);
+
+    $content =
+        html_writer::tag(
+            'code',
+            s($row[1]),
+            array(
+                'id' => $valueid,
+                'style' => '
+                display:inline-block;
+                margin-right:10px;
+            '
+            )
+        );
+
+    if (
+        strpos($row[1], 'http') === 0
+    ) {
+        $content .= html_writer::tag(
+            'button',
+            get_string('copy', 'local_dww_sso'),
+            array(
+                'type' => 'button',
+                'onclick' => "
+                navigator.clipboard.writeText(
+                    document.getElementById('" . $valueid . "').innerText
+                );
+                this.innerText = '" . get_string('copied', 'local_dww_sso') . "';
+            ",
+                'style' => '
+                border:none;
+                border-radius:6px;
+                padding:6px 10px;
+                cursor:pointer;
+                background:#1976d2;
+                color:#fff;
+                font-weight:bold;
+            '
+            )
+        );
+    }
+
     echo html_writer::tag(
         'td',
-        s($row[1])
+        $content
     );
 
     echo html_writer::end_tag('tr');

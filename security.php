@@ -5,6 +5,41 @@ require_once(__DIR__ . '/../../config.php');
 require_login();
 require_capability('moodle/site:config', context_system::instance());
 
+function local_dww_sso_status_badge($status = 'ok')
+{
+    $status = (string) $status;
+
+    if ($status === 'ok') {
+        $label = get_string('ok', 'local_dww_sso');
+        $background = '#e8f5e9';
+        $color = '#2e7d32';
+    } else if ($status === 'warning') {
+        $label = get_string('warning', 'local_dww_sso');
+        $background = '#fff3e0';
+        $color = '#ef6c00';
+    } else {
+        $label = get_string('error', 'local_dww_sso');
+        $background = '#ffebee';
+        $color = '#b00020';
+    }
+
+    return html_writer::tag(
+        'span',
+        $label,
+        array(
+            'style' => '
+                display:inline-block;
+                padding:6px 12px;
+                border-radius:999px;
+                font-weight:bold;
+                background:' . $background . ';
+                color:' . $color . ';
+                font-size:13px;
+            '
+        )
+    );
+}
+
 $PAGE->set_context(context_system::instance());
 $PAGE->set_url(new moodle_url('/local/dww_sso/security.php'));
 $PAGE->set_pagelayout('admin');
@@ -72,14 +107,10 @@ foreach ($checks as $check) {
     echo html_writer::start_tag('tr');
     echo html_writer::tag('td', s($check['label']));
     echo html_writer::tag(
-        'td',
-        $ok ? get_string('ok', 'local_dww_sso') : get_string('warning', 'local_dww_sso'),
-        array(
-            'style' => $ok
-                ? 'font-weight:bold;color:#357a38;'
-                : 'font-weight:bold;color:#b26a00;',
-        )
-    );
+    'td',
+    local_dww_sso_status_badge($ok ? 'ok' : 'warning')
+);
+
     echo html_writer::tag('td', s($check['message']));
     echo html_writer::end_tag('tr');
 }

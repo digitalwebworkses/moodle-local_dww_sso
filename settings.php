@@ -49,6 +49,16 @@ if ($hassiteconfig) {
         )
     );
 
+    $settings->add(
+        new admin_setting_configtext(
+            'local_dww_sso/wordpressurl',
+            get_string('wordpressurl', 'local_dww_sso'),
+            get_string('wordpressurl_desc', 'local_dww_sso'),
+            '',
+            PARAM_URL
+        )
+    );
+
     $ADMIN->add(
         'local_dww_sso_category',
         $settings
