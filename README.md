@@ -10,6 +10,18 @@ DWW Moodle SSO works together with the DWW Moodle Bridge WordPress plugin to pro
 
 ---
 
+# Documentation
+
+## English
+
+- [Installation Guide](INSTALL.md)
+
+## Español
+
+- [Guía de instalación](INSTALL.es.md)
+
+---
+
 # Features
 
 - Secure Single Sign-On (SSO)
@@ -36,7 +48,7 @@ DWW Moodle SSO works together with the DWW Moodle Bridge WordPress plugin to pro
 
 ---
 
-# Installation
+# Quick Installation
 
 ## 1. Install plugin
 
@@ -74,7 +86,7 @@ Configure:
 
 ---
 
-## 3. Setup Wizard
+## 3. Run Setup Wizard
 
 Open:
 
@@ -216,6 +228,12 @@ Verify:
 openssl s_client -connect yourdomain.com:443 -servername yourdomain.com
 ```
 
+Verification should return:
+
+```text
+Verify return code: 0 (ok)
+```
+
 ---
 
 # Development Status
@@ -226,7 +244,15 @@ Current status:
 Alpha
 ```
 
-The plugin is under active development and testing.
+The plugin is under active development and testing in real production environments.
+
+---
+
+# Changelog
+
+See:
+
+- [CHANGELOG.md](CHANGELOG.md)
 
 ---
 
