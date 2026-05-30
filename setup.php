@@ -14,6 +14,37 @@ $PAGE->set_heading(get_string('pluginname', 'local_dww_sso'));
 
 global $CFG;
 
+function local_dww_sso_status_badge($ok = true)
+{
+    $label = $ok
+        ? get_string('ok', 'local_dww_sso')
+        : get_string('warning', 'local_dww_sso');
+
+    $background = $ok
+        ? '#e8f5e9'
+        : '#fff3e0';
+
+    $color = $ok
+        ? '#2e7d32'
+        : '#ef6c00';
+
+    return html_writer::tag(
+        'span',
+        $label,
+        array(
+            'style' => '
+                display:inline-block;
+                padding:6px 12px;
+                border-radius:999px;
+                font-weight:bold;
+                background:' . $background . ';
+                color:' . $color . ';
+                font-size:13px;
+            '
+        )
+    );
+}
+
 $sharedsecret = get_config('local_dww_sso', 'sharedsecret');
 
 $wordpressurl = trim(
@@ -49,37 +80,6 @@ if (!empty($wordpressurl)) {
     }
 }
 
-function local_dww_sso_status_badge($ok = true)
-{
-    $label = $ok
-        ? get_string('ok', 'local_dww_sso')
-        : get_string('warning', 'local_dww_sso');
-
-    $background = $ok
-        ? '#e8f5e9'
-        : '#fff3e0';
-
-    $color = $ok
-        ? '#2e7d32'
-        : '#ef6c00';
-
-    return html_writer::tag(
-        'span',
-        $label,
-        array(
-            'style' => '
-                display:inline-block;
-                padding:6px 12px;
-                border-radius:999px;
-                font-weight:bold;
-                background:' . $background . ';
-                color:' . $color . ';
-                font-size:13px;
-            '
-        )
-    );
-}
-
 $checks = array(
     array(
         'label' => get_string('setup_sharedsecret', 'local_dww_sso'),
@@ -112,6 +112,7 @@ $readiness = (int) round(
 echo $OUTPUT->header();
 
 echo $OUTPUT->heading(get_string('setupwizard', 'local_dww_sso'));
+
 $color = '#c62828';
 
 if ($readiness >= 100) {
@@ -182,7 +183,6 @@ echo html_writer::start_tag(
 );
 
 echo html_writer::start_tag('thead');
-
 echo html_writer::start_tag('tr');
 
 echo html_writer::tag(
@@ -196,7 +196,6 @@ echo html_writer::tag(
 );
 
 echo html_writer::end_tag('tr');
-
 echo html_writer::end_tag('thead');
 
 echo html_writer::start_tag('tbody');
@@ -214,15 +213,18 @@ foreach ($checks as $check) {
 
     echo html_writer::tag(
         'td',
-        local_dww_sso_status_badge($ok),
+        local_dww_sso_status_badge($ok)
     );
 
     echo html_writer::end_tag('tr');
 }
 
 echo html_writer::end_tag('tbody');
-
 echo html_writer::end_tag('table');
+
+// -----------------------------------------------------------------
+// WORDPRESS VALIDATION
+// -----------------------------------------------------------------
 
 if (!empty($wordpressurl)) {
 
@@ -279,16 +281,13 @@ if (!empty($wordpressurl)) {
 
         echo html_writer::tag(
             'td',
-            local_dww_sso_status_badge(
-                $ok ? 'ok' : 'warning'
-            )
+            local_dww_sso_status_badge($ok)
         );
 
         echo html_writer::end_tag('tr');
     }
 
     echo html_writer::end_tag('tbody');
-
     echo html_writer::end_tag('table');
 }
 
@@ -349,42 +348,39 @@ foreach ($rows as $row) {
 
     $valueid = 'dww-copy-' . md5($row[0]);
 
-    $content =
-        html_writer::tag(
-            'code',
-            s($row[1]),
-            array(
-                'id' => $valueid,
-                'style' => '
+    $content = html_writer::tag(
+        'code',
+        s($row[1]),
+        array(
+            'id' => $valueid,
+            'style' => '
                 display:inline-block;
                 margin-right:10px;
             '
-            )
-        );
+        )
+    );
 
-    if (
-        strpos($row[1], 'http') === 0
-    ) {
+    if (strpos($row[1], 'http') === 0) {
         $content .= html_writer::tag(
             'button',
             get_string('copy', 'local_dww_sso'),
             array(
                 'type' => 'button',
                 'onclick' => "
-                navigator.clipboard.writeText(
-                    document.getElementById('" . $valueid . "').innerText
-                );
-                this.innerText = '" . get_string('copied', 'local_dww_sso') . "';
-            ",
+                    navigator.clipboard.writeText(
+                        document.getElementById('" . $valueid . "').innerText
+                    );
+                    this.innerText = '" . get_string('copied', 'local_dww_sso') . "';
+                ",
                 'style' => '
-                border:none;
-                border-radius:6px;
-                padding:6px 10px;
-                cursor:pointer;
-                background:#1976d2;
-                color:#fff;
-                font-weight:bold;
-            '
+                    border:none;
+                    border-radius:6px;
+                    padding:6px 10px;
+                    cursor:pointer;
+                    background:#1976d2;
+                    color:#fff;
+                    font-weight:bold;
+                '
             )
         );
     }
@@ -398,8 +394,28 @@ foreach ($rows as $row) {
 }
 
 echo html_writer::end_tag('tbody');
-
 echo html_writer::end_tag('table');
+
+// -----------------------------------------------------------------
+// MOODLE WEB SERVICE
+// -----------------------------------------------------------------
+
+echo html_writer::tag(
+    'h3',
+    get_string('setup_webservice', 'local_dww_sso')
+);
+
+echo $OUTPUT->notification(
+    get_string('setup_token_warning', 'local_dww_sso'),
+    'warning'
+);
+
+echo html_writer::alist(array(
+    get_string('setup_webservice_item1', 'local_dww_sso'),
+    get_string('setup_webservice_item2', 'local_dww_sso'),
+    get_string('setup_webservice_item3', 'local_dww_sso'),
+    get_string('setup_webservice_item4', 'local_dww_sso'),
+));
 
 // -----------------------------------------------------------------
 // NEXT STEPS
