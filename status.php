@@ -30,7 +30,7 @@ echo html_writer::start_tag('table', array('class' => 'generaltable'));
 echo html_writer::start_tag('tbody');
 
 $rows = array(
-    get_string('pluginversion', 'local_dww_sso') => '1.0.8-alpha',
+    get_string('pluginversion', 'local_dww_sso') => '1.0.0-rc1',
     get_string('moodleversion', 'local_dww_sso') => $CFG->release,
     get_string('sharedsecretstatus', 'local_dww_sso') => $secretconfigured
         ? get_string('configured', 'local_dww_sso')

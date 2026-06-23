@@ -1,6 +1,6 @@
 # DWW Moodle Bridge — Installation Guide
 
-Version: 1.1.1-alpha
+Version: 1.0.0-rc1
 
 ---
 

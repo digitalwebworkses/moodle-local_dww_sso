@@ -1,6 +1,6 @@
 # DWW Moodle SSO
 
-![Version](https://img.shields.io/badge/version-1.1.1--alpha-green)
+![Version](https://img.shields.io/badge/version-1.0.0--rc1-green)
 ![Moodle](https://img.shields.io/badge/Moodle-4.x-orange)
 ![PHP](https://img.shields.io/badge/PHP-8.x-blue)
 
