@@ -93,3 +93,39 @@ $string['setup_webservice_item1'] = 'The "DWW Moodle Bridge Service" service is 
 $string['setup_webservice_item2'] = 'Before generating the token, add an authorised user to the service.';
 $string['setup_webservice_item3'] = 'Generate the token using only the "DWW Moodle Bridge Service".';
 $string['setup_webservice_item4'] = 'Paste the generated token into the WordPress plugin settings.';
+
+$string['returntosite'] = 'Return to site';
+$string['errorinvalidlink'] = 'Invalid link';
+$string['errorinvalidlink_desc'] = 'The access link does not have a valid format.';
+$string['errorinvalidrequest'] = 'Invalid request';
+$string['errorinvalidaccesslink'] = 'The access link is not valid.';
+$string['errorssonotavailable'] = 'SSO unavailable';
+$string['errorssonotavailable_desc'] = 'Automatic access is not configured correctly.';
+$string['erroraccessinvalid'] = 'Invalid access';
+$string['errorsecurityvalidationfailed'] = 'The security validation for this access has failed.';
+$string['errordatainvalid'] = 'Invalid data';
+$string['erroraccessdatainvalid'] = 'The access information could not be validated.';
+$string['erroraccessexpired'] = 'Access expired';
+$string['erroraccessexpired_desc'] = 'The access link has expired. Please access again from your course area.';
+$string['errordataincomplete'] = 'Incomplete data';
+$string['errordataincomplete_desc'] = 'Automatic access could not be completed.';
+$string['erroraccessusedorinvalid'] = 'The access link is invalid or can no longer be used.';
+$string['erroraccessused'] = 'Access already used';
+$string['erroraccessused_desc'] = 'This access link has already been used. Please access again from your course area.';
+$string['erroruserunavailable'] = 'User unavailable';
+$string['erroruserunavailable_desc'] = 'Your Moodle account is currently unavailable.';
+$string['errorcourseunavailable'] = 'Course unavailable';
+$string['errorcourseunavailable_desc'] = 'The requested course is no longer available.';
+$string['erroraccessunavailable'] = 'Access unavailable';
+$string['erroraccessunavailable_desc'] = 'You do not have an active enrolment for this course.';
+
+$string['noncestorage'] = 'Nonce storage';
+$string['noncestorage_config'] = 'Nonces are stored using Moodle configuration APIs.';
+
+$string['privacy:metadata'] = 'The DWW Moodle SSO plugin does not store personal data in its own database tables. It only processes temporary SSO tokens to authenticate existing Moodle users.';
+
+$string['logs_moodle_debugging_notice'] = 'DWW Moodle SSO uses Moodle debugging facilities and does not write custom log files.';
+
+$string['logs_no_custom_files'] = 'Operational logs are not stored in plugin-managed files. For troubleshooting, enable Moodle debugging or review the web server and Moodle diagnostic information.';
+
+$string['local_dww_sso_service'] = 'DWW Moodle Bridge Service';

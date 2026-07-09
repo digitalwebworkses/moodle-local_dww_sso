@@ -1,4 +1,23 @@
 <?php
+// This file is part of Moodle - https://moodle.org/
+//
+// DWW Moodle SSO is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// DWW Moodle SSO is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+
+/**
+ * Single Sign-On entry point for DWW Moodle SSO.
+ *
+ * @package    local_dww_sso
+ * @copyright  2026 Digital Web Works
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 ob_start();
 
@@ -6,8 +25,15 @@ require_once(__DIR__ . '/../../config.php');
 require_once($CFG->libdir . '/moodlelib.php');
 require_once(__DIR__ . '/classes/logger.php');
 
-function local_dww_sso_render_error($title, $message, $returnurl = '')
-{
+/**
+ * Renders a controlled SSO error page.
+ *
+ * @param string $title Error title.
+ * @param string $message Error message.
+ * @param string $returnurl Optional safe return URL.
+ * @return void
+ */
+function local_dww_sso_render_error($title, $message, $returnurl = '') {
     global $OUTPUT, $PAGE, $SITE;
 
     if (ob_get_length()) {
@@ -30,11 +56,21 @@ function local_dww_sso_render_error($title, $message, $returnurl = '')
     );
 
     echo html_writer::tag('h2', s($title));
-    echo html_writer::tag('p', s($message), array('style' => 'margin-top:20px;font-size:16px;'));
+    echo html_writer::tag(
+        'p',
+        s($message),
+        array(
+            'style' => 'margin-top:20px;font-size:16px;',
+        )
+    );
 
     if (!empty($returnurl)) {
         echo html_writer::start_div('', array('style' => 'margin-top:30px;'));
-        echo html_writer::link($returnurl, 'Volver al sitio', array('class' => 'btn btn-primary'));
+        echo html_writer::link(
+            $returnurl,
+            get_string('returntosite', 'local_dww_sso'),
+            array('class' => 'btn btn-primary')
+        );
         echo html_writer::end_div();
     }
 
@@ -44,8 +80,13 @@ function local_dww_sso_render_error($title, $message, $returnurl = '')
     exit;
 }
 
-function local_dww_sso_get_safe_return_url($returnurl)
-{
+/**
+ * Returns a safe internal or Moodle-owned return URL.
+ *
+ * @param string $returnurl Requested return URL.
+ * @return string
+ */
+function local_dww_sso_get_safe_return_url($returnurl) {
     global $CFG;
 
     if (empty($returnurl)) {
@@ -71,58 +112,62 @@ function local_dww_sso_get_safe_return_url($returnurl)
     return '/';
 }
 
-function local_dww_sso_nonce_was_used($nonce)
-{
-    global $CFG;
+/**
+ * Checks and stores whether a nonce was already used.
+ *
+ * Nonces are stored using Moodle configuration APIs instead of writing
+ * files manually to dataroot. This keeps the plugin compliant with Moodle
+ * filesystem expectations and avoids custom plugin-managed files.
+ *
+ * @param string $nonce Nonce value.
+ * @return bool True if the nonce was already used.
+ */
+function local_dww_sso_nonce_was_used($nonce) {
+    $hash = sha1($nonce);
+    $configname = 'usednonce_' . $hash;
 
-    $dir = $CFG->dataroot . '/dww_sso/nonces';
+    $used = get_config('local_dww_sso', $configname);
 
-    if (!is_dir($dir)) {
-        mkdir($dir, 0775, true);
-    }
-
-    $file = $dir . '/' . sha1($nonce) . '.used';
-
-    if (file_exists($file)) {
+    if (!empty($used)) {
         return true;
     }
 
-    file_put_contents($file, (string) time(), LOCK_EX);
+    set_config($configname, time(), 'local_dww_sso');
 
     return false;
 }
 
-global $DB, $CFG;
+global $DB;
 
 $token = required_param('token', PARAM_RAW_TRIMMED);
 
 if (empty($token)) {
-    local_dww_sso_logger::warning('Token SSO vacío.');
+    local_dww_sso_logger::warning('Empty SSO token.');
 
     local_dww_sso_render_error(
-        'Enlace inválido',
-        'El enlace de acceso no tiene un formato válido.',
+        get_string('errorinvalidlink', 'local_dww_sso'),
+        get_string('errorinvalidlink_desc', 'local_dww_sso'),
         '/'
     );
 }
 
 if (strlen($token) > 4096) {
     local_dww_sso_logger::warning(
-        'Token SSO demasiado grande.',
+        'SSO token too large.',
         array(
             'length' => strlen($token),
         )
     );
 
     local_dww_sso_render_error(
-        'Solicitud inválida',
-        'El enlace de acceso no es válido.',
+        get_string('errorinvalidrequest', 'local_dww_sso'),
+        get_string('errorinvalidaccesslink', 'local_dww_sso'),
         '/'
     );
 }
 
 local_dww_sso_logger::info(
-    'Inicio de petición SSO.',
+    'SSO request started.',
     array(
         'has_token' => true,
         'ip'        => $_SERVER['REMOTE_ADDR'] ?? '',
@@ -133,29 +178,29 @@ local_dww_sso_logger::info(
 $parts = explode('.', $token);
 
 if (count($parts) !== 2) {
-    local_dww_sso_logger::warning('Formato de token inválido.');
+    local_dww_sso_logger::warning('Invalid SSO token format.');
 
     local_dww_sso_render_error(
-        'Enlace inválido',
-        'El enlace de acceso no tiene un formato válido.',
+        get_string('errorinvalidlink', 'local_dww_sso'),
+        get_string('errorinvalidlink_desc', 'local_dww_sso'),
         '/'
     );
 }
 
-$payload_encoded = $parts[0];
-$signature       = $parts[1];
+$payloadencoded = $parts[0];
+$signature = $parts[1];
 
 if (
-    empty($payload_encoded) ||
+    empty($payloadencoded) ||
     empty($signature) ||
-    !preg_match('/^[A-Za-z0-9\-_]+$/', $payload_encoded) ||
+    !preg_match('/^[A-Za-z0-9\-_]+$/', $payloadencoded) ||
     !preg_match('/^[a-f0-9]{64}$/i', $signature)
 ) {
-    local_dww_sso_logger::warning('Token SSO con caracteres inválidos.');
+    local_dww_sso_logger::warning('SSO token contains invalid characters.');
 
     local_dww_sso_render_error(
-        'Enlace inválido',
-        'El enlace de acceso no tiene un formato válido.',
+        get_string('errorinvalidlink', 'local_dww_sso'),
+        get_string('errorinvalidlink_desc', 'local_dww_sso'),
         '/'
     );
 }
@@ -167,71 +212,71 @@ if (empty($sharedsecret) && !empty($CFG->dww_sso_secret)) {
 }
 
 if (empty($sharedsecret) || strlen($sharedsecret) < 32) {
-    local_dww_sso_logger::error('Secreto SSO no configurado o demasiado débil.');
+    local_dww_sso_logger::error('SSO shared secret is missing or too weak.');
 
     local_dww_sso_render_error(
-        'SSO no disponible',
-        'El acceso automático no está configurado correctamente.',
+        get_string('errorssonotavailable', 'local_dww_sso'),
+        get_string('errorssonotavailable_desc', 'local_dww_sso'),
         '/'
     );
 }
 
-$expected_signature = hash_hmac(
+$expectedsignature = hash_hmac(
     'sha256',
-    $payload_encoded,
+    $payloadencoded,
     $sharedsecret
 );
 
-if (!hash_equals($expected_signature, $signature)) {
-    local_dww_sso_logger::warning('Firma SSO inválida.');
+if (!hash_equals($expectedsignature, $signature)) {
+    local_dww_sso_logger::warning('Invalid SSO signature.');
 
     local_dww_sso_render_error(
-        'Acceso no válido',
-        'La validación de seguridad del acceso ha fallado.',
+        get_string('erroraccessinvalid', 'local_dww_sso'),
+        get_string('errorsecurityvalidationfailed', 'local_dww_sso'),
         '/'
     );
 }
 
-$payload_json = base64_decode(
-    strtr($payload_encoded, '-_', '+/'),
+$payloadjson = base64_decode(
+    strtr($payloadencoded, '-_', '+/'),
     true
 );
 
-if ($payload_json === false) {
-    local_dww_sso_logger::warning('Payload SSO no decodificable.');
+if ($payloadjson === false) {
+    local_dww_sso_logger::warning('SSO payload could not be decoded.');
 
     local_dww_sso_render_error(
-        'Datos inválidos',
-        'No se pudo validar la información del acceso.',
+        get_string('errordatainvalid', 'local_dww_sso'),
+        get_string('erroraccessdatainvalid', 'local_dww_sso'),
         '/'
     );
 }
 
-$payload = json_decode($payload_json, true);
+$payload = json_decode($payloadjson, true);
 
 if (empty($payload) || json_last_error() !== JSON_ERROR_NONE) {
-    local_dww_sso_logger::warning('Payload SSO inválido.');
+    local_dww_sso_logger::warning('Invalid SSO payload JSON.');
 
     local_dww_sso_render_error(
-        'Datos inválidos',
-        'No se pudo validar la información del acceso.',
+        get_string('errordatainvalid', 'local_dww_sso'),
+        get_string('erroraccessdatainvalid', 'local_dww_sso'),
         '/'
     );
 }
 
-$moodle_user_id = !empty($payload['moodle_user_id']) ? (int) $payload['moodle_user_id'] : 0;
-$courseid       = !empty($payload['course_id']) ? (int) $payload['course_id'] : 0;
-$expires        = !empty($payload['expires']) ? (int) $payload['expires'] : 0;
-$nonce          = !empty($payload['nonce']) ? clean_param($payload['nonce'], PARAM_ALPHANUMEXT) : '';
+$moodleuserid = !empty($payload['moodle_user_id']) ? (int) $payload['moodle_user_id'] : 0;
+$courseid = !empty($payload['course_id']) ? (int) $payload['course_id'] : 0;
+$expires = !empty($payload['expires']) ? (int) $payload['expires'] : 0;
+$nonce = !empty($payload['nonce']) ? clean_param($payload['nonce'], PARAM_ALPHANUMEXT) : '';
 
 $returnurl = !empty($payload['return_url'])
     ? local_dww_sso_get_safe_return_url($payload['return_url'])
     : '/';
 
 local_dww_sso_logger::info(
-    'Payload SSO recibido.',
+    'SSO payload received.',
     array(
-        'moodle_user_id' => $moodle_user_id,
+        'moodle_user_id' => $moodleuserid,
         'course_id'      => $courseid,
         'expires'        => $expires,
     )
@@ -239,9 +284,9 @@ local_dww_sso_logger::info(
 
 if (empty($expires) || time() > $expires) {
     local_dww_sso_logger::warning(
-        'Token SSO expirado.',
+        'Expired SSO token.',
         array(
-            'moodle_user_id' => $moodle_user_id,
+            'moodle_user_id' => $moodleuserid,
             'course_id'      => $courseid,
             'expires'        => $expires,
             'now'            => time(),
@@ -249,57 +294,57 @@ if (empty($expires) || time() > $expires) {
     );
 
     local_dww_sso_render_error(
-        'Acceso caducado',
-        'El enlace de acceso ha expirado. Vuelve a acceder desde tu área de cursos.',
+        get_string('erroraccessexpired', 'local_dww_sso'),
+        get_string('erroraccessexpired_desc', 'local_dww_sso'),
         $returnurl
     );
 }
 
-if (empty($moodle_user_id) || empty($courseid)) {
+if (empty($moodleuserid) || empty($courseid)) {
     local_dww_sso_logger::warning(
-        'Payload SSO incompleto.',
+        'Incomplete SSO payload.',
         array(
-            'moodle_user_id' => $moodle_user_id,
+            'moodle_user_id' => $moodleuserid,
             'course_id'      => $courseid,
         )
     );
 
     local_dww_sso_render_error(
-        'Datos incompletos',
-        'No se pudo completar el acceso automático.',
+        get_string('errordataincomplete', 'local_dww_sso'),
+        get_string('errordataincomplete_desc', 'local_dww_sso'),
         $returnurl
     );
 }
 
 if (empty($nonce) || !preg_match('/^[a-f0-9\-]{36}$/i', $nonce)) {
     local_dww_sso_logger::warning(
-        'Payload SSO sin nonce válido.',
+        'Missing or invalid SSO nonce.',
         array(
-            'moodle_user_id' => $moodle_user_id,
+            'moodle_user_id' => $moodleuserid,
             'course_id'      => $courseid,
         )
     );
 
     local_dww_sso_render_error(
-        'Acceso no válido',
-        'El enlace de acceso no es válido o ya no puede utilizarse.',
+        get_string('erroraccessinvalid', 'local_dww_sso'),
+        get_string('erroraccessusedorinvalid', 'local_dww_sso'),
         $returnurl
     );
 }
 
 if (local_dww_sso_nonce_was_used($nonce)) {
     local_dww_sso_logger::warning(
-        'Intento de reutilización de token SSO bloqueado.',
+        'Blocked SSO token reuse attempt.',
         array(
-            'moodle_user_id' => $moodle_user_id,
+            'moodle_user_id' => $moodleuserid,
             'course_id'      => $courseid,
             'nonce'          => substr($nonce, 0, 8) . '...',
         )
     );
 
     local_dww_sso_render_error(
-        'Acceso ya utilizado',
-        'Este enlace de acceso ya ha sido utilizado. Vuelve a acceder desde tu área de cursos.',
+        get_string('erroraccessused', 'local_dww_sso'),
+        get_string('erroraccessused_desc', 'local_dww_sso'),
         $returnurl
     );
 }
@@ -307,7 +352,7 @@ if (local_dww_sso_nonce_was_used($nonce)) {
 $user = $DB->get_record(
     'user',
     array(
-        'id'        => $moodle_user_id,
+        'id'        => $moodleuserid,
         'deleted'   => 0,
         'suspended' => 0,
     )
@@ -315,15 +360,15 @@ $user = $DB->get_record(
 
 if (!$user) {
     local_dww_sso_logger::error(
-        'Usuario Moodle no encontrado o suspendido.',
+        'Moodle user not found or suspended.',
         array(
-            'moodle_user_id' => $moodle_user_id,
+            'moodle_user_id' => $moodleuserid,
         )
     );
 
     local_dww_sso_render_error(
-        'Usuario no disponible',
-        'Tu cuenta Moodle no está disponible actualmente.',
+        get_string('erroruserunavailable', 'local_dww_sso'),
+        get_string('erroruserunavailable_desc', 'local_dww_sso'),
         $returnurl
     );
 }
@@ -337,15 +382,15 @@ $course = $DB->get_record(
 
 if (!$course) {
     local_dww_sso_logger::error(
-        'Curso Moodle no encontrado.',
+        'Moodle course not found.',
         array(
             'course_id' => $courseid,
         )
     );
 
     local_dww_sso_render_error(
-        'Curso no disponible',
-        'El curso solicitado ya no está disponible.',
+        get_string('errorcourseunavailable', 'local_dww_sso'),
+        get_string('errorcourseunavailable_desc', 'local_dww_sso'),
         $returnurl
     );
 }
@@ -354,24 +399,24 @@ $context = context_course::instance($courseid, IGNORE_MISSING);
 
 if (!$context || !is_enrolled($context, $user, '', true)) {
     local_dww_sso_logger::warning(
-        'Usuario sin matrícula activa en el curso solicitado.',
+        'User is not actively enrolled in requested course.',
         array(
-            'moodle_user_id' => $moodle_user_id,
+            'moodle_user_id' => $moodleuserid,
             'course_id'      => $courseid,
         )
     );
 
     local_dww_sso_render_error(
-        'Acceso no disponible',
-        'No tienes una matrícula activa para este curso.',
+        get_string('erroraccessunavailable', 'local_dww_sso'),
+        get_string('erroraccessunavailable_desc', 'local_dww_sso'),
         $returnurl
     );
 }
 
 local_dww_sso_logger::info(
-    'Login SSO validado. Iniciando sesión Moodle.',
+    'SSO login validated. Starting Moodle session.',
     array(
-        'moodle_user_id' => $moodle_user_id,
+        'moodle_user_id' => $moodleuserid,
         'course_id'      => $courseid,
     )
 );
@@ -383,9 +428,9 @@ if (ob_get_length()) {
 complete_user_login($user);
 
 local_dww_sso_logger::info(
-    'Login SSO completado. Redirigiendo al curso.',
+    'SSO login completed. Redirecting to course.',
     array(
-        'moodle_user_id' => $moodle_user_id,
+        'moodle_user_id' => $moodleuserid,
         'course_id'      => $courseid,
     )
 );

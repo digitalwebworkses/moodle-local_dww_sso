@@ -1,13 +1,27 @@
 <?php
+// This file is part of Moodle - https://moodle.org/
+//
+// DWW Moodle SSO is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// DWW Moodle SSO is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+
+/**
+ * Administration settings for DWW Moodle SSO.
+ *
+ * @package    local_dww_sso
+ * @copyright  2026 Digital Web Works
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 defined('MOODLE_INTERNAL') || die();
 
 if ($hassiteconfig) {
-
-    // -----------------------------------------------------------------
-    // CATEGORY
-    // -----------------------------------------------------------------
-
     $ADMIN->add(
         'localplugins',
         new admin_category(
@@ -15,10 +29,6 @@ if ($hassiteconfig) {
             get_string('pluginname', 'local_dww_sso')
         )
     );
-
-    // -----------------------------------------------------------------
-    // SETUP WIZARD
-    // -----------------------------------------------------------------
 
     $ADMIN->add(
         'local_dww_sso_category',
@@ -29,10 +39,6 @@ if ($hassiteconfig) {
             'moodle/site:config'
         )
     );
-
-    // -----------------------------------------------------------------
-    // GENERAL SETTINGS
-    // -----------------------------------------------------------------
 
     $settings = new admin_settingpage(
         'local_dww_sso',
@@ -64,10 +70,6 @@ if ($hassiteconfig) {
         $settings
     );
 
-    // -----------------------------------------------------------------
-    // STATUS
-    // -----------------------------------------------------------------
-
     $ADMIN->add(
         'local_dww_sso_category',
         new admin_externalpage(
@@ -77,10 +79,6 @@ if ($hassiteconfig) {
             'moodle/site:config'
         )
     );
-
-    // -----------------------------------------------------------------
-    // DIAGNOSTICS
-    // -----------------------------------------------------------------
 
     $ADMIN->add(
         'local_dww_sso_category',
@@ -92,10 +90,6 @@ if ($hassiteconfig) {
         )
     );
 
-    // -----------------------------------------------------------------
-    // SECURITY
-    // -----------------------------------------------------------------
-
     $ADMIN->add(
         'local_dww_sso_category',
         new admin_externalpage(
@@ -105,10 +99,6 @@ if ($hassiteconfig) {
             'moodle/site:config'
         )
     );
-
-    // -----------------------------------------------------------------
-    // LOGS
-    // -----------------------------------------------------------------
 
     $ADMIN->add(
         'local_dww_sso_category',

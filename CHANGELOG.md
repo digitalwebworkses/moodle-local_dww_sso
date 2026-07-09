@@ -6,6 +6,57 @@ This project follows a pragmatic release process during alpha development.
 
 ---
 
+# DWW Moodle SSO v1.0.0-rc1
+
+First Release Candidate of DWW Moodle SSO.
+
+DWW Moodle SSO is the official Moodle companion plugin for DWW Moodle Bridge. It enables Single Sign-On integration between WordPress/WooCommerce and Moodle, allowing students to access Moodle courses through a controlled WordPress-based purchase and enrolment flow.
+
+## Added
+
+- Single Sign-On endpoint for Moodle access from WordPress.
+- Integration with DWW Moodle Bridge.
+- Secure token-based login flow.
+- Moodle-side configuration page.
+- Setup assistant for initial configuration.
+- Diagnostics page for checking plugin status.
+- Security checks for integration requests.
+- Logging support for SSO events.
+- English and Spanish language strings.
+- Moodle Web Service integration support.
+
+## Improved
+
+- Validation of Moodle plugin configuration.
+- Diagnostics and status visibility.
+- Installation and setup documentation.
+- Compatibility with Moodle 4.4, 4.5 and 5.0.
+- Release metadata for public distribution.
+
+## Security
+
+- Token-based access validation.
+- Protection against direct unauthorized access.
+- Server-side checks before authenticating users.
+- Separation between public Moodle plugin and private license infrastructure.
+
+## Tested with
+
+- Moodle 4.4
+- Moodle 4.5
+- Moodle 5.0
+- PHP 8.0+
+- DWW Moodle Bridge v1.0.0-rc1
+- DWW License Server v1.0.0-rc1
+
+## Notes
+
+This is a Release Candidate intended for controlled production validation.
+
+If no critical issues are detected during the validation period, this version will evolve into the first stable 1.0.0 release.
+
+---
+
 ## [1.1.1-alpha] - 2026-05-29
 
 ### Added

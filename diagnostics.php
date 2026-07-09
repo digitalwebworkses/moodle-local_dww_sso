@@ -1,4 +1,23 @@
 <?php
+// This file is part of Moodle - https://moodle.org/
+//
+// DWW Moodle SSO is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// DWW Moodle SSO is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+
+/**
+ * Diagnostics page for DWW Moodle SSO.
+ *
+ * @package    local_dww_sso
+ * @copyright  2026 Digital Web Works
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 require_once(__DIR__ . '/../../config.php');
 require_once(__DIR__ . '/classes/logger.php');
@@ -6,8 +25,7 @@ require_once(__DIR__ . '/classes/logger.php');
 require_login();
 require_capability('moodle/site:config', context_system::instance());
 
-function local_dww_sso_status_badge($status = 'ok')
-{
+function local_dww_sso_status_badge($status = 'ok') {
     $status = (string) $status;
 
     if ($status === 'ok') {
@@ -28,15 +46,8 @@ function local_dww_sso_status_badge($status = 'ok')
         'span',
         $label,
         array(
-            'style' => '
-                display:inline-block;
-                padding:6px 12px;
-                border-radius:999px;
-                font-weight:bold;
-                background:' . $background . ';
-                color:' . $color . ';
-                font-size:13px;
-            '
+            'style' => 'display:inline-block;padding:6px 12px;border-radius:999px;font-weight:bold;background:' .
+                $background . ';color:' . $color . ';font-size:13px;',
         )
     );
 }
@@ -52,14 +63,6 @@ $secretok = !empty($sharedsecret) && strlen($sharedsecret) >= 32;
 
 $endpointfile = __DIR__ . '/login.php';
 $endpointok = file_exists($endpointfile) && is_readable($endpointfile);
-
-$noncedir = $CFG->dataroot . '/dww_sso/nonces';
-
-if (!is_dir($noncedir)) {
-    @mkdir($noncedir, 0775, true);
-}
-
-$noncewritable = is_dir($noncedir) && is_writable($noncedir);
 
 $loggerok = class_exists('local_dww_sso_logger');
 
@@ -79,11 +82,9 @@ $checks = array(
             : get_string('endpointmissing', 'local_dww_sso'),
     ),
     array(
-        'label' => get_string('noncedirectory', 'local_dww_sso'),
-        'status' => $noncewritable,
-        'message' => $noncewritable
-            ? $noncedir
-            : get_string('notwritable', 'local_dww_sso'),
+        'label' => get_string('noncestorage', 'local_dww_sso'),
+        'status' => true,
+        'message' => get_string('noncestorage_config', 'local_dww_sso'),
     ),
     array(
         'label' => get_string('loggerstatus', 'local_dww_sso'),
@@ -110,13 +111,9 @@ echo $OUTPUT->heading(get_string('diagnostics', 'local_dww_sso'));
 
 echo html_writer::start_div('box generalbox', array('style' => 'max-width:1000px;'));
 
-echo html_writer::tag(
-    'p',
-    get_string('diagnostics_desc', 'local_dww_sso')
-);
+echo html_writer::tag('p', get_string('diagnostics_desc', 'local_dww_sso'));
 
 echo html_writer::start_tag('table', array('class' => 'generaltable'));
-
 echo html_writer::start_tag('thead');
 echo html_writer::start_tag('tr');
 echo html_writer::tag('th', get_string('check', 'local_dww_sso'));
@@ -132,11 +129,7 @@ foreach ($checks as $check) {
 
     echo html_writer::start_tag('tr');
     echo html_writer::tag('td', s($check['label']));
-    echo html_writer::tag(
-    'td',
-    local_dww_sso_status_badge($ok ? 'ok' : 'error')
-);
-
+    echo html_writer::tag('td', local_dww_sso_status_badge($ok ? 'ok' : 'error'));
     echo html_writer::tag('td', s($check['message']));
     echo html_writer::end_tag('tr');
 }
