@@ -21,8 +21,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2026062301;
+$plugin->version   = 2026070902;
 $plugin->requires  = 2024100700;
 $plugin->component = 'local_dww_sso';
 $plugin->maturity  = MATURITY_RC;
-$plugin->release   = '1.0.0-rc1';
+$plugin->release   = '1.0.0-rc2';

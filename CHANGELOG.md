@@ -6,6 +6,19 @@ This project follows a pragmatic release process during alpha development.
 
 ---
 
+# 1.0.0-rc2 - 2026-07-09
+
+## Fixed
+
+- Added Moodle Privacy API implementation.
+- Documented external API communication.
+- Replaced custom filesystem logging with Moodle-compliant mechanisms.
+- Added standard Moodle GPL boilerplate headers.
+- Internationalized remaining user-facing strings.
+- Renamed repository to match Moodle component conventions.
+
+---
+
 # DWW Moodle SSO v1.0.0-rc1
 
 First Release Candidate of DWW Moodle SSO.
