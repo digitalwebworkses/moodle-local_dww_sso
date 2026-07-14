@@ -6,6 +6,19 @@ This project follows a pragmatic release process during alpha development.
 
 ---
 
+## [1.0.0-rc3] - 2026-07-14
+
+### Fixed
+
+- Removed accidental backtick characters from `status.php`.
+- Fixed the PHP syntax error detected by the Moodle Plugin CI check.
+- Added the standard Moodle boilerplate header to the remaining flagged source files.
+- Added explicit copyright and GPL license markers where required.
+- Prepared the package for a new Moodle.org review submission.
+
+
+---
+
 # 1.0.0-rc2 - 2026-07-09
 
 ## Fixed

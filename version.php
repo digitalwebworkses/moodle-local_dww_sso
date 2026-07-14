@@ -1,5 +1,12 @@
 <?php
-// This file is part of Moodle - https://moodle.org/
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License...
+//
+// @package    local_dww_sso
+// @copyright  2026 Carlos M. Márquez
+// @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 //
 // DWW Moodle SSO is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,8 +28,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2026070902;
+$plugin->version   = 2026071401;
 $plugin->requires  = 2024100700;
 $plugin->component = 'local_dww_sso';
 $plugin->maturity  = MATURITY_RC;
-$plugin->release   = '1.0.0-rc2';
+$plugin->release   = '1.0.0-rc3';
