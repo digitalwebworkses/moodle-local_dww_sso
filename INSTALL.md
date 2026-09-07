@@ -1,6 +1,6 @@
 # DWW Moodle Bridge — Installation Guide
 
-Version: 1.0.0-rc1
+Version: 1.0.0-rc3
 
 ---
 
@@ -40,7 +40,7 @@ Required:
 
 Required:
 
-- Moodle 4.x
+- Moodle 4.5+
 - PHP 8.x
 - HTTPS enabled
 - Valid SSL certificate chain
@@ -512,7 +512,7 @@ Broken infrastructures, heavily modified Moodle installations or invalid SSL set
 Current status:
 
 ```text
-Alpha
+Release Candidate 3 (1.0.0-rc3)
 ```
 
 Core functionality is operational and validated in real environments.
@@ -523,4 +523,4 @@ Further improvements and fixes are distributed to all active customers.
 
 # LICENSE
 
-GPL v2 or later
+GNU GPL v3 or later

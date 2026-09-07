@@ -2,7 +2,7 @@
 
 All notable changes to DWW Moodle SSO will be documented in this file.
 
-This project follows a pragmatic release process during alpha development.
+This project follows a pragmatic release candidate process before the first stable release.
 
 ---
 

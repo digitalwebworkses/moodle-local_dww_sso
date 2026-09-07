@@ -1,7 +1,7 @@
 # DWW Moodle SSO
 
-![Versión](https://img.shields.io/badge/version-1.0.0--rc1-green)
-![Moodle](https://img.shields.io/badge/Moodle-4.x-orange)
+![Versión](https://img.shields.io/badge/version-1.0.0--rc3-green)
+![Moodle](https://img.shields.io/badge/Moodle-4.5+-orange)
 ![PHP](https://img.shields.io/badge/PHP-8.x-blue)
 
 Plugin complementario de integración y Single Sign-On seguro para DWW Moodle Bridge.
@@ -41,7 +41,7 @@ DWW Moodle SSO trabaja junto al plugin DWW Moodle Bridge para WordPress para pro
 
 # Requisitos
 
-- Moodle 4.x
+- Moodle 4.5+
 - PHP 8.x
 - HTTPS habilitado
 - Cadena SSL válida
@@ -241,7 +241,7 @@ Verify return code: 0 (ok)
 Estado actual:
 
 ```text
-Alpha
+Release Candidate 3 (1.0.0-rc3)
 ```
 
 El plugin se encuentra en desarrollo activo y validación en entornos reales de producción.
@@ -258,4 +258,4 @@ Consultar:
 
 # Licencia
 
-GPL v2 o posterior
+GNU GPL v3 o posterior
